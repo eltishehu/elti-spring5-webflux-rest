@@ -92,12 +92,12 @@ public class CategoryControllerTest {
     public void patchWithChanges() {
 
         BDDMockito.given(categoryRepository.findById(any(String.class)))
-                .willReturn(Mono.just(Category.builder().build()));
+                .willReturn(Mono.just(Category.builder().description("Old description").build()));
 
         BDDMockito.given(categoryRepository.save(any(Category.class)))
                 .willReturn(Mono.just(Category.builder().build()));
 
-        Mono<Category> catToUpdateMono = Mono.just(Category.builder().description("Some Cat").build());
+        Mono<Category> catToUpdateMono = Mono.just(Category.builder().description("New description").build());
 
         webTestClient.patch().uri("/api/v1/categories/asdfghjkl")
                 .body(catToUpdateMono, Category.class)
@@ -113,12 +113,12 @@ public class CategoryControllerTest {
     public void patchWithNoChanges() {
 
         BDDMockito.given(categoryRepository.findById(any(String.class)))
-                .willReturn(Mono.just(Category.builder().build()));
+                .willReturn(Mono.just(Category.builder().description("Some description").build()));
 
         BDDMockito.given(categoryRepository.save(any(Category.class)))
                 .willReturn(Mono.just(Category.builder().build()));
 
-        Mono<Category> catToUpdateMono = Mono.just(Category.builder().build());
+        Mono<Category> catToUpdateMono = Mono.just(Category.builder().description("Some description").build());
 
         webTestClient.patch().uri("/api/v1/categories/asdfghjkl")
                 .body(catToUpdateMono, Category.class)
