@@ -40,4 +40,11 @@ public class VendorController {
     Mono<Void> create(@RequestBody Publisher<Vendor> vendorStream) {
         return vendorRepository.saveAll(vendorStream).then();
     }
+
+    @PutMapping("/api/v1/vendors/{id}")
+    @ResponseStatus(HttpStatus.OK) // this is the default response status; not necessarily required
+    Mono<Vendor> update(@PathVariable String id, @RequestBody Vendor vendor) {
+        vendor.setId(id);
+        return vendorRepository.save(vendor);
+    }
 }
