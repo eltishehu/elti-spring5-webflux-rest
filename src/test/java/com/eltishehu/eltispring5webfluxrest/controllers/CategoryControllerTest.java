@@ -6,9 +6,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
+import org.reactivestreams.Publisher;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import static org.mockito.ArgumentMatchers.any;
 
 /**
  * Created by e.sh. on 22-Oct-18
@@ -52,5 +55,20 @@ public class CategoryControllerTest {
                 .exchange()
                 .expectBody(Category.class);
 
+    }
+
+    @Test
+    public void create() {
+
+        BDDMockito.given(categoryRepository.saveAll(any(Publisher.class)))
+                .willReturn(Flux.just(Category.builder().build()));
+
+        Mono<Category> catToSaveMono = Mono.just(Category.builder().description("Some category").build());
+
+        webTestClient.post().uri("/api/v1/categories")
+                .body(catToSaveMono, Category.class)
+                .exchange()
+                .expectStatus()
+                .isCreated();
     }
 }

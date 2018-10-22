@@ -2,9 +2,9 @@ package com.eltishehu.eltispring5webfluxrest.controllers;
 
 import com.eltishehu.eltispring5webfluxrest.domain.Category;
 import com.eltishehu.eltispring5webfluxrest.repositories.CategoryRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.reactivestreams.Publisher;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -24,12 +24,20 @@ public class CategoryController {
     //Flux is zero or many elements
 
     @GetMapping("/api/v1/categories")
+    @ResponseStatus(HttpStatus.OK)
     Flux<Category> list() {
         return categoryRepository.findAll();
     }
 
     @GetMapping("/api/v1/categories/{id}")
+    @ResponseStatus(HttpStatus.OK)
     Mono<Category> getCategoryById(@PathVariable String id) {
         return categoryRepository.findById(id);
+    }
+
+    @PostMapping("/api/v1/categories")
+    @ResponseStatus(HttpStatus.CREATED)
+    Mono<Void> create(@RequestBody Publisher<Category> categoryStream) {
+        return categoryRepository.saveAll(categoryStream).then();
     }
 }
